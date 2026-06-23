@@ -27,3 +27,10 @@ export const validateLogout = {
     refreshToken: z.string().min(1),
   }),
 };
+
+export const validateAdminLogin = {
+  body: z.object({
+    email: z.string().email(),
+    password: z.string().min(1),
+  }),
+};

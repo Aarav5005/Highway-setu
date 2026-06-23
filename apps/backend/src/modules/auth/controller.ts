@@ -52,4 +52,13 @@ export const createAuthController = (service: AuthService) => ({
       next(error);
     }
   },
+
+  adminLogin: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await service.adminLogin(req.body.email, req.body.password);
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
 });

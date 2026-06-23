@@ -1,0 +1,17 @@
+{
+  "app_name": "Highway Setu",
+  "select_language": "Select Language / भाषा चुनें / ਭਾਸ਼ਾ ਚੁਣੋ",
+  "select_role": "Who are you?",
+  "truck_driver": "Truck Driver",
+  "dhaba_owner": "Dhaba Owner", 
+  "mechanic": "Mechanic",
+  "enter_phone": "Enter Mobile Number",
+  "send_otp": "Send OTP",
+  "enter_otp": "Enter OTP",
+  "verify": "Verify",
+  "resend_otp": "Resend OTP",
+  "loading": "Loading...",
+  "error_generic": "Something went wrong. Please try again.",
+  "error_phone_invalid": "Please enter a valid 10 digit mobile number",
+  "error_otp_invalid": "Please enter a valid 6 digit OTP"
+}

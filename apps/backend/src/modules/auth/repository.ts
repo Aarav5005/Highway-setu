@@ -11,6 +11,7 @@ type CreateUserInput = {
 
 export type AuthRepository = {
   findUserByPhone(phoneE164: string): Promise<AuthRepositoryUser | null>;
+  findUserByEmail(email: string): Promise<AuthRepositoryUser | null>;
   findUserById(userId: string): Promise<AuthRepositoryUser | null>;
   createUser(input: CreateUserInput): Promise<AuthRepositoryUser>;
   updateUserRole(userId: string, role: UserRole): Promise<AuthRepositoryUser | null>;
@@ -29,6 +30,8 @@ const toUserRecord = (row: Record<string, unknown>): AuthRepositoryUser => ({
   id: String(row.id),
   firebase_uid: String(row.firebase_uid),
   phone_e164: String(row.phone_e164),
+  email: row.email ? String(row.email) : undefined,
+  password_hash: row.password_hash ? String(row.password_hash) : undefined,
   role: row.role as UserRole,
   verification_status: row.verification_status as VerificationStatus,
   language_pref: row.language_pref as PreferredLanguage,
@@ -71,7 +74,7 @@ export const createAuthRepository = (pool: Pool = dbPool): AuthRepository => ({
   async findUserByPhone(phoneE164) {
     const result = await pool.query<Record<string, unknown>>(
       `
-        SELECT id, firebase_uid, phone_e164, role, verification_status, language_pref, created_at, updated_at
+        SELECT id, firebase_uid, phone_e164, email, password_hash, role, verification_status, language_pref, created_at, updated_at
         FROM users
         WHERE phone_e164 = $1
         LIMIT 1
@@ -82,10 +85,24 @@ export const createAuthRepository = (pool: Pool = dbPool): AuthRepository => ({
     return result.rows[0] ? toUserRecord(result.rows[0]) : null;
   },
 
+  async findUserByEmail(email) {
+    const result = await pool.query<Record<string, unknown>>(
+      `
+        SELECT id, firebase_uid, phone_e164, email, password_hash, role, verification_status, language_pref, created_at, updated_at
+        FROM users
+        WHERE email = $1
+        LIMIT 1
+      `,
+      [email]
+    );
+
+    return result.rows[0] ? toUserRecord(result.rows[0]) : null;
+  },
+
   async findUserById(userId) {
     const result = await pool.query<Record<string, unknown>>(
       `
-        SELECT id, firebase_uid, phone_e164, role, verification_status, language_pref, created_at, updated_at
+        SELECT id, firebase_uid, phone_e164, email, password_hash, role, verification_status, language_pref, created_at, updated_at
         FROM users
         WHERE id = $1
         LIMIT 1

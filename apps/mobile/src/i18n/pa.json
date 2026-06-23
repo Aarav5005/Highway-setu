@@ -1,0 +1,17 @@
+{
+  "app_name": "Highway Setu",
+  "select_language": "Select Language / भाषा चुनें / ਭਾਸ਼ਾ ਚੁਣੋ",
+  "select_role": "ਤੁਸੀਂ ਕੌਣ ਹੋ?",
+  "truck_driver": "ਟਰੱਕ ਡਰਾਈਵਰ",
+  "dhaba_owner": "ਢਾਬਾ ਮਾਲਕ", 
+  "mechanic": "ਮਕੈਨਿਕ",
+  "enter_phone": "ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+  "send_otp": "OTP ਭੇਜੋ",
+  "enter_otp": "OTP ਦਰਜ ਕਰੋ",
+  "verify": "ਤਸਦੀਕ ਕਰੋ",
+  "resend_otp": "OTP ਦੁਬਾਰਾ ਭੇਜੋ",
+  "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+  "error_generic": "ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "error_phone_invalid": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10 ਅੰਕਾਂ ਦਾ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+  "error_otp_invalid": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 6 ਅੰਕਾਂ ਦਾ OTP ਦਰਜ ਕਰੋ"
+}

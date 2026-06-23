@@ -10,7 +10,7 @@ export const usersRouter = Router();
 usersRouter.get('/me', requireAuth(), async (req, res, next) => {
   try {
     const result = await dbPool.query(
-      'SELECT id, phone_e164, role, verification_status, preferred_language, fcm_token, created_at, updated_at FROM users WHERE id = $1',
+      'SELECT id, phone_e164, role, verification_status, language_pref, fcm_token, created_at, updated_at FROM users WHERE id = $1',
       [req.auth!.userId]
     );
     if (result.rows.length === 0) {
@@ -33,7 +33,7 @@ usersRouter.put(
   async (req, res, next) => {
     try {
       await dbPool.query(
-        'UPDATE users SET preferred_language = $1, updated_at = now() WHERE id = $2',
+        'UPDATE users SET language_pref = $1, updated_at = now() WHERE id = $2',
         [req.body.language, req.auth!.userId]
       );
       res.status(200).json({ success: true });

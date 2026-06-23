@@ -12,6 +12,7 @@ import type { AuthRepository } from './repository';
 import { buildProfileCompletion, toAuthUserResponse } from './repository';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../auth/token-service';
 import { sendFirebaseOtp, verifyFirebaseOtp } from '../../integrations/firebase';
+import bcrypt from 'bcrypt';
 import { dbPool } from '../../db/pool';
 import type { AuthSessionStore } from './session-store';
 import { createAuthSessionStore, pruneExpiredEntries } from './session-store';
@@ -41,6 +42,7 @@ export type AuthService = {
   logout(input: { accessUserId: string; refreshToken: string }): Promise<LogoutResponseDto>;
   getAuthContext(userId: string): Promise<AuthMeResponseDto>;
   selectRole(input: RoleSelectionDto): Promise<AuthUserResponseDto>;
+  adminLogin(email: string, password: string): Promise<VerifyOtpResponseDto>;
 };
 
 const normalizePhone = (phoneE164: string) => phoneE164.trim();
@@ -245,6 +247,36 @@ export const createAuthService = ({
     return toAuthUserResponse(updated);
   };
 
+  const adminLogin = async (email: string, password: string): Promise<VerifyOtpResponseDto> => {
+    const user = await repository.findUserByEmail(email);
+    if (!user || user.role !== 'admin' || !user.password_hash) {
+      throw new AppError({
+        statusCode: 401,
+        code: 'AUTH_INVALID_CREDENTIALS',
+        message: 'Invalid admin credentials',
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      throw new AppError({
+        statusCode: 401,
+        code: 'AUTH_INVALID_CREDENTIALS',
+        message: 'Invalid admin credentials',
+      });
+    }
+
+    const tokens = issueTokensForUser(user.id, user.role);
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      tokenType: 'Bearer',
+      expiresInSeconds: tokens.accessExpiresInSeconds,
+      user: toAuthUserResponse(user),
+    };
+  };
+
   return {
     sendOtp,
     verifyOtp,
@@ -252,5 +284,6 @@ export const createAuthService = ({
     logout,
     getAuthContext,
     selectRole,
+    adminLogin,
   };
 };

@@ -41,6 +41,8 @@ export type UserRecord = {
   id: string;
   firebase_uid: string;
   phone_e164: string;
+  email?: string;
+  password_hash?: string;
   role: UserRole;
   verification_status: VerificationStatus;
   language_pref: PreferredLanguage;
