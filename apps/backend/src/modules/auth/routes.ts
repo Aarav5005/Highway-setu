@@ -1,0 +1,27 @@
+import { Router } from 'express';
+import { requireAuth } from '../../middleware/require-auth';
+import {
+  validateLogout,
+  validateRefreshToken,
+  validateSendOtp,
+  validateVerifyOtp,
+} from './validator';
+import { createAuthRepository } from './repository';
+import { createAuthService } from './service';
+import { createAuthController } from './controller';
+import { createAuthSessionStore } from './session-store';
+
+const repository = createAuthRepository();
+const sessionStore = createAuthSessionStore();
+const service = createAuthService({ repository, sessionStore });
+const controller = createAuthController(service);
+
+import { validateRequest } from '../../middleware/validate-request';
+
+export const authRouter = Router();
+
+authRouter.post('/send-otp', validateRequest(validateSendOtp), controller.sendOtp);
+authRouter.post('/verify-otp', validateRequest(validateVerifyOtp), controller.verifyOtp);
+authRouter.post('/refresh', validateRequest(validateRefreshToken), controller.refresh);
+authRouter.post('/logout', requireAuth(), validateRequest(validateLogout), controller.logout);
+authRouter.get('/me', requireAuth(), controller.me);
