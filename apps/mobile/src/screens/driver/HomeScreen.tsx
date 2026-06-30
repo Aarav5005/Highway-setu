@@ -196,7 +196,7 @@ export default function HomeScreen() {
               <View style={styles.header}>
                 <View style={styles.logoRow}>
                   <Text style={styles.headerLogoText}>Highway</Text>
-                  <Text style={[styles.headerLogoText, { color: theme.colors.warning }]}>Setu</Text>
+                  <Text style={[styles.headerLogoText, { color: theme.colors.primary }]}>Setu</Text>
                 </View>
                 <TouchableOpacity style={styles.bellIcon} onPress={() => Alert.alert('Notifications', 'No new notifications right now.')}>
                   <Icon name="bell" size={20} color={theme.colors.white} />
@@ -224,13 +224,13 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate('TripPlanner')}
             >
               <LinearGradient
-                colors={['#1E3A8A', '#3B82F6']}
+                colors={[theme.colors.primary, theme.colors.primaryDark]}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
                 style={styles.startTripBtn}
               >
                 <View style={styles.startTripIconWrapper}>
                   <Reanimated.View style={animatedTruckStyle}>
-                    <Icon name="truck" size={24} color={theme.colors.driverPrimary} />
+                    <Icon name="truck" size={24} color={theme.colors.primary} />
                   </Reanimated.View>
                 </View>
                 <View style={styles.startTripTextWrapper}>
@@ -267,8 +267,8 @@ export default function HomeScreen() {
                 style={styles.nearbyCard}
                 onPress={() => navigation.navigate('Map')}
               >
-                <LinearGradient colors={['#FEF3C7', '#FDE68A']} style={styles.nearbyIconBg}>
-                  <Icon name="coffee" size={24} color={theme.colors.dhabaPrimary} />
+                <LinearGradient colors={[theme.colors.primaryLight, '#FFD4B8']} style={styles.nearbyIconBg}>
+                  <Icon name="coffee" size={24} color={theme.colors.primary} />
                 </LinearGradient>
                 <View style={styles.nearbyTextContainer}>
                   <Text style={styles.nearbyTitle}>Dhabas</Text>
@@ -280,8 +280,8 @@ export default function HomeScreen() {
                 style={styles.nearbyCard}
                 onPress={() => navigation.navigate('Map')}
               >
-                <LinearGradient colors={['#DBEAFE', '#BFDBFE']} style={styles.nearbyIconBg}>
-                  <Icon name="tool" size={24} color={theme.colors.mechanicPrimary} />
+                <LinearGradient colors={[theme.colors.infoLight, '#C7D9FB']} style={styles.nearbyIconBg}>
+                  <Icon name="tool" size={24} color={theme.colors.info} />
                 </LinearGradient>
                 <View style={styles.nearbyTextContainer}>
                   <Text style={styles.nearbyTitle}>Mechanics</Text>
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.sm,
     marginBottom: theme.spacing.xl,
-    shadowColor: '#1E3A8A',
+    shadowColor: theme.colors.primaryDark,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 12,

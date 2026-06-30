@@ -59,7 +59,7 @@ export default function SOSScreen() {
 
           <TouchableOpacity style={styles.helpCard}>
             <View style={[styles.helpIconBg, { backgroundColor: 'rgba(59, 130, 246, 0.1)' }]}>
-              <MaterialIcon name="police-badge-outline" size={28} color="#3b82f6" />
+              <MaterialIcon name="police-badge-outline" size={28} color={theme.colors.info} />
             </View>
             <View style={styles.helpTextCol}>
               <Text style={styles.helpTitle}>Police Station</Text>

@@ -189,7 +189,7 @@ export default function MapScreen() {
               tracksViewChanges={false}
             >
               <View style={styles.markerWrap}>
-                <View style={[styles.markerDot, { backgroundColor: theme.colors.mechanicPrimary }, highlightedId === m.id && styles.markerHighlight]}>
+                <View style={[styles.markerDot, { backgroundColor: theme.colors.info }, highlightedId === m.id && styles.markerHighlight]}>
                   <FeatherIcon name="tool" size={14} color={theme.colors.white} />
                 </View>
               </View>
@@ -294,10 +294,10 @@ export default function MapScreen() {
           {mechanics.length > 0 && (
             <View style={styles.poiSection}>
               <View style={styles.poiSectionHeader}>
-                <FeatherIcon name="tool" size={18} color={theme.colors.mechanicPrimary} />
+                <FeatherIcon name="tool" size={18} color={theme.colors.info} />
                 <Text style={styles.poiSectionTitle}>Mechanics Along Route</Text>
                 <View style={[styles.poiCount, { backgroundColor: '#DBEAFE' }]}>
-                  <Text style={[styles.poiCountText, { color: theme.colors.mechanicPrimary }]}>{mechanics.length}</Text>
+                  <Text style={[styles.poiCountText, { color: theme.colors.info }]}>{mechanics.length}</Text>
                 </View>
               </View>
 
@@ -308,8 +308,8 @@ export default function MapScreen() {
                   onPress={() => navigation.navigate('MechanicDetail', { mechanicId: m.id })}
                   activeOpacity={0.7}
                 >
-                  <View style={[styles.poiIconBg, { backgroundColor: '#DBEAFE' }]}>
-                    <FeatherIcon name="tool" size={22} color={theme.colors.mechanicPrimary} />
+                  <View style={[styles.poiIconBg, { backgroundColor: theme.colors.infoLight }]}>
+                    <FeatherIcon name="tool" size={22} color={theme.colors.info} />
                   </View>
                   <View style={styles.poiInfo}>
                     <Text style={styles.poiName}>{m.shop_name}</Text>
@@ -319,7 +319,7 @@ export default function MapScreen() {
                     <View style={styles.amenitiesRow}>
                       {(m.services || []).map((s: string) => (
                         <View key={s} style={[styles.amenityChip, { backgroundColor: '#EFF6FF' }]}>
-                          <Text style={[styles.amenityText, { color: theme.colors.mechanicPrimary }]}>{s}</Text>
+                          <Text style={[styles.amenityText, { color: theme.colors.info }]}>{s}</Text>
                         </View>
                       ))}
                       {m.can_travel && (
@@ -331,8 +331,8 @@ export default function MapScreen() {
                     </View>
                   </View>
                   <View style={styles.poiAction}>
-                    <Text style={[styles.poiActionTxt, {color: theme.colors.mechanicPrimary}]}>Book</Text>
-                    <FeatherIcon name="chevron-right" size={16} color={theme.colors.mechanicPrimary} />
+                    <Text style={[styles.poiActionTxt, {color: theme.colors.info}]}>Book</Text>
+                    <FeatherIcon name="chevron-right" size={16} color={theme.colors.info} />
                   </View>
                 </TouchableOpacity>
               ))}

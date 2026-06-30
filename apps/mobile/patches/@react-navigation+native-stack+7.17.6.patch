@@ -1,0 +1,14 @@
+diff --git a/node_modules/@react-navigation/native-stack/lib/module/views/NativeStackView.native.js b/node_modules/@react-navigation/native-stack/lib/module/views/NativeStackView.native.js
+index c342e90..33ac972 100644
+--- a/node_modules/@react-navigation/native-stack/lib/module/views/NativeStackView.native.js
++++ b/node_modules/@react-navigation/native-stack/lib/module/views/NativeStackView.native.js
+@@ -5,7 +5,8 @@ import { NavigationProvider, StackActions, usePreventRemoveContext, useTheme } f
+ import * as React from 'react';
+ import { Animated, Platform, StatusBar, StyleSheet, useAnimatedValue, View } from 'react-native';
+ import { useSafeAreaInsets } from 'react-native-safe-area-context';
+-import { compatibilityFlags, ScreenStack, ScreenStackItem } from 'react-native-screens';
++import { ScreenStack, ScreenStackItem } from 'react-native-screens';
++const compatibilityFlags = {};
+ import { debounce } from "../utils/debounce.js";
+ import { getModalRouteKeys } from "../utils/getModalRoutesKeys.js";
+ import { AnimatedHeaderHeightContext } from "../utils/useAnimatedHeaderHeight.js";

@@ -1,74 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, ImageBackground, Platform, Animated, Image } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Modal from 'react-native-modal';
+
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../theme';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ErrorBanner from '../../components/ErrorBanner';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Modal from 'react-native-modal';
 
 // Helper for menu categories
-const MENU_CATEGORIES = [
-  { id: 'thali', name: 'Thalis', icon: 'food' },
-  { id: 'main', name: 'Main Course', icon: 'pot-steam' },
-  { id: 'bread', name: 'Breads', icon: 'bread-slice' },
-  { id: 'drink', name: 'Beverages', icon: 'cup-water' },
+const SERVICE_CATEGORIES = [
+  { id: 'repair', name: 'Repairs', icon: 'wrench' },
+  { id: 'tyre', name: 'Tyre & Wheel', icon: 'tire' },
+  { id: 'towing', name: 'Towing', icon: 'tow-truck' },
 ];
 
-export default function DhabaDetailScreen() {
+export default function MechanicDetailScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const dhabaId = route.params?.dhabaId;
+  const mechanicId = route.params?.mechanicId;
 
-  const [dhaba, setDhaba] = useState<any>(null);
-  const [menu, setMenu] = useState<any[]>([]);
+  const [mechanic, setMechanic] = useState<any>(null);
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cart, setCart] = useState<{item: any, qty: number}[]>([]);
-  const [activeCategory, setActiveCategory] = useState('thali');
+  const [activeCategory, setActiveCategory] = useState('repair');
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
+
   // Animation for cart pulse
   const cartScale = new Animated.Value(1);
 
   useEffect(() => {
     fetchData();
-  }, [dhabaId]);
+  }, [mechanicId]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      setDhaba({
-        id: dhabaId,
-        dhaba_name: 'Apna Dhaba',
+      setMechanic({
+        id: mechanicId,
+        shop_name: 'Highway Auto Fix',
         highway_name: 'NH 48',
-        avg_rating: 4.5,
-        reviews: 230,
-        distance_km: 2.4,
+        avg_rating: 4.8,
+        reviews: 110,
+        distance_km: 1.2,
         is_open: true,
-        close_time: '11:00 PM',
-        photos: ['https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&q=80&w=800'],
+        close_time: '24/7',
+        photos: ['https://images.unsplash.com/photo-1597816828557-0db79f6e625a?auto=format&fit=crop&q=80&w=800'],
         amenities: [
-          { name: 'Parking', icon: 'car' },
-          { name: 'Washroom', icon: 'toilet' },
-          { name: 'AC Hall', icon: 'air-conditioner' },
-          { name: 'Dormitory', icon: 'bed' },
-          { name: 'Wi-Fi', icon: 'wifi' },
+          { name: 'On-site Repair', icon: 'tool' },
+          { name: 'Towing', icon: 'truck' },
+          { name: 'Battery Jump', icon: 'zap' },
         ],
       });
-      setMenu([
-        { id: '1', name: 'Special Veg Thali', price: 150, category: 'thali', veg: true },
-        { id: '2', name: 'Dal Makhani', price: 110, category: 'main', veg: true },
-        { id: '3', name: 'Paneer Butter Masala', price: 140, category: 'main', veg: true },
-        { id: '4', name: 'Tandoori Roti', price: 15, category: 'bread', veg: true },
-        { id: '5', name: 'Lassi', price: 50, category: 'drink', veg: true },
+      setServices([
+        { id: '1', name: 'Engine Diagnostic', price: 500, category: 'repair', veg: true },
+        { id: '2', name: 'Brake Pad Change', price: 800, category: 'repair', veg: true },
+        { id: '3', name: 'Flat Tyre Fix', price: 150, category: 'tyre', veg: true },
+        { id: '4', name: 'Wheel Alignment', price: 400, category: 'tyre', veg: true },
+        { id: '5', name: 'Emergency Towing (per km)', price: 100, category: 'towing', veg: true },
       ]);
     } catch(e) {
-      setError('Failed to load dhaba details');
+      setError('Failed to load mechanic details');
     } finally {
       setLoading(false);
     }
@@ -108,7 +107,7 @@ export default function DhabaDetailScreen() {
   const totalAmount = cart.reduce((acc, c) => acc + (c.item.price * c.qty), 0);
   const totalItems = cart.reduce((acc, c) => acc + c.qty, 0);
 
-  const filteredMenu = menu.filter(m => m.category === activeCategory);
+  const filteredMenu = services.filter(m => m.category === activeCategory);
 
   return (
     <View style={styles.container}>
@@ -116,10 +115,10 @@ export default function DhabaDetailScreen() {
 
       <ScrollView bounces={false} contentContainerStyle={styles.scrollContent}>
 
-        {/* Hero Image */}
+        {/* Photos Carousel */}
         <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} style={{ height: 250 }}>
-          {dhaba?.photos && dhaba.photos.length > 0 ? (
-            dhaba.photos.map((photo: string, index: number) => (
+          {mechanic?.photos && mechanic.photos.length > 0 ? (
+            mechanic.photos.map((photo: string, index: number) => (
               <TouchableOpacity key={index} activeOpacity={0.9} onPress={() => setSelectedPhoto(photo)}>
                 <ImageBackground
                   source={{ uri: photo }}
@@ -151,29 +150,28 @@ export default function DhabaDetailScreen() {
           )}
         </ScrollView>
 
-
         {/* Bottom Sheet Content */}
         <View style={styles.bottomSheet}>
           <View style={styles.headerRow}>
             <View style={{flex: 1}}>
-              <Text style={styles.title}>{dhaba?.dhaba_name}</Text>
-              <Text style={styles.subTxt}>{dhaba?.distance_km} km • {dhaba?.highway_name}</Text>
+              <Text style={styles.title}>{mechanic?.shop_name}</Text>
+              <Text style={styles.subTxt}>{mechanic?.distance_km} km • {mechanic?.highway_name}</Text>
             </View>
-            <View style={styles.ratingBadge}>
-              <Text style={styles.ratingBadgeTxt}>{dhaba?.avg_rating}</Text>
+            <View style={[styles.ratingBadge, {backgroundColor: theme.colors.mechanicPrimary}]}>
+              <Text style={styles.ratingBadgeTxt}>{mechanic?.avg_rating}</Text>
               <MaterialIcon name="star" size={12} color={theme.colors.white} />
             </View>
           </View>
 
           <View style={styles.statusRow}>
-            <Text style={styles.statusText}><Text style={{color: theme.colors.success, fontWeight: 'bold'}}>Open</Text> • Closes {dhaba?.close_time}</Text>
+            <Text style={styles.statusText}><Text style={{color: theme.colors.success, fontWeight: 'bold'}}>Available</Text> • Closes {mechanic?.close_time}</Text>
           </View>
 
           {/* Amenities Scroll */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.amenitiesScroll} contentContainerStyle={styles.amenitiesContainer}>
-            {dhaba?.amenities?.map((am: any, idx: number) => (
+            {mechanic?.amenities?.map((am: any, idx: number) => (
               <View key={idx} style={styles.amenityChip}>
-                <MaterialIcon name={am.icon} size={16} color={theme.colors.textSecondary} style={{marginRight: 6}} />
+                <FeatherIcon name={am.icon} size={14} color={theme.colors.textSecondary} style={{marginRight: 6}} />
                 <Text style={styles.amenityText}>{am.name}</Text>
               </View>
             ))}
@@ -183,7 +181,7 @@ export default function DhabaDetailScreen() {
 
           {/* Menu Categories */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={styles.catContainer}>
-            {MENU_CATEGORIES.map(cat => (
+            {SERVICE_CATEGORIES.map(cat => (
               <TouchableOpacity
                 key={cat.id}
                 style={[styles.catPill, activeCategory === cat.id && styles.catPillActive]}
@@ -202,8 +200,8 @@ export default function DhabaDetailScreen() {
               return (
                 <View key={item.id} style={styles.menuItemRow}>
                   <View style={{flex: 1, paddingRight: 16}}>
-                    <View style={[styles.vegTag, { borderColor: item.veg ? '#16a34a' : '#dc2626' }]}>
-                      <View style={[styles.vegDot, {backgroundColor: item.veg ? '#16a34a' : '#dc2626'}]} />
+                    <View style={styles.vegTag}>
+                      <FeatherIcon name="tool" size={12} color={theme.colors.mechanicPrimary} />
                     </View>
                     <Text style={styles.menuItemName}>{item.name}</Text>
                     <Text style={styles.menuItemPrice}>₹{item.price}</Text>
@@ -241,9 +239,9 @@ export default function DhabaDetailScreen() {
       {cart.length > 0 && (
         <Animated.View style={[styles.floatingCartWrapper, { bottom: (Platform.OS === 'android' ? 24 : 16) + insets.bottom, transform: [{scale: cartScale}] }]}>
           <TouchableOpacity
-            style={styles.floatingCart}
+            style={[styles.floatingCart, {backgroundColor: theme.colors.mechanicPrimary}]}
             activeOpacity={0.9}
-            onPress={() => navigation.navigate('OrderConfirm', { cart, dhabaId })}
+            onPress={() => navigation.navigate('OrderConfirm', { cart, mechanicId })}
           >
             <View style={styles.cartInfo}>
               <View style={styles.cartBadge}>
@@ -277,6 +275,7 @@ export default function DhabaDetailScreen() {
           )}
         </View>
       </Modal>
+
     </View>
   );
 }
@@ -303,7 +302,7 @@ const styles = StyleSheet.create({
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
   title: { ...theme.typography.h1, color: theme.colors.text, marginBottom: 4 },
   subTxt: { ...theme.typography.body, color: theme.colors.textSecondary },
-  ratingBadge: { backgroundColor: theme.colors.success, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
+  ratingBadge: { backgroundColor: theme.colors.warning, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
   ratingBadgeTxt: { color: theme.colors.white, fontWeight: 'bold', marginRight: 4, fontSize: 14 },
 
   statusRow: { marginBottom: theme.spacing.md },
@@ -327,8 +326,7 @@ const styles = StyleSheet.create({
   // Menu Items
   menuList: { paddingBottom: theme.spacing.lg },
   menuItemRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.surface },
-  vegTag: { width: 14, height: 14, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 6, borderRadius: 2 },
-  vegDot: { width: 6, height: 6, borderRadius: 3 },
+  vegTag: { width: 20, height: 20, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center', marginBottom: 6, borderRadius: 10 },
   menuItemName: { ...theme.typography.h3, color: theme.colors.text, marginBottom: 4 },
   menuItemPrice: { ...theme.typography.body, color: theme.colors.textSecondary, fontWeight: 'bold' as const },
 
@@ -342,7 +340,7 @@ const styles = StyleSheet.create({
 
   // Floating Cart
   floatingCartWrapper: { position: 'absolute', left: 16, right: 16, zIndex: 10, ...theme.shadows.lg },
-  floatingCart: { backgroundColor: theme.colors.driverPrimary, borderRadius: 16, padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  floatingCart: { backgroundColor: theme.colors.mechanicPrimary, borderRadius: 16, padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cartInfo: { flexDirection: 'row', alignItems: 'center' },
   cartBadge: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   cartBadgeTxt: { color: theme.colors.white, fontWeight: 'bold', fontSize: 16 },

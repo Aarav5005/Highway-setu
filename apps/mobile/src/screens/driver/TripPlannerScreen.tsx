@@ -171,18 +171,18 @@ export default function TripPlannerScreen() {
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <FeatherIcon name="coffee" size={16} color={theme.colors.dhabaPrimary} />
+                <FeatherIcon name="coffee" size={16} color={theme.colors.primary} />
                 <Text style={styles.statValue}>{route.dhabas.length} Dhabas</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <FeatherIcon name="tool" size={16} color={theme.colors.mechanicPrimary} />
+                <FeatherIcon name="tool" size={16} color={theme.colors.info} />
                 <Text style={styles.statValue}>{route.mechanics.length} Mechanics</Text>
               </View>
             </View>
 
             {/* Start Button */}
-            <View style={[styles.startBtn, { backgroundColor: route.color }]}>
+            <View style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}>
               {loading === route.id ? (
                 <ActivityIndicator color={theme.colors.white} />
               ) : (

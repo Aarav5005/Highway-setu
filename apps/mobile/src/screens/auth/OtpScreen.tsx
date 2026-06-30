@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 
   phoneContainer: { alignItems: 'center', marginBottom: theme.spacing.lg },
   phoneText: { ...theme.typography.h2, color: theme.colors.text, letterSpacing: 1, marginBottom: 2 },
-  changeText: { ...theme.typography.body, color: '#3B82F6' },
+  changeText: { ...theme.typography.body, color: theme.colors.primary },
 
   illustrationContainer: { width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.lg },
   heroImage: { width: 100, height: 100 },
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
 
   resendContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.lg },
   resendText: { ...theme.typography.body, color: theme.colors.textSecondary },
-  timerText: { ...theme.typography.body, color: theme.colors.primary, fontWeight: 'bold', backgroundColor: 'rgba(59, 130, 246, 0.1)', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, overflow: 'hidden' },
+  timerText: { ...theme.typography.body, color: theme.colors.primary, fontWeight: 'bold', backgroundColor: theme.colors.primaryLight, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, overflow: 'hidden' },
 
   btn: { backgroundColor: theme.colors.primary, width: '100%', height: 56, borderRadius: theme.borderRadius.lg, justifyContent: 'center', alignItems: 'center' },
   btnText: { ...theme.typography.h3, color: theme.colors.white },
