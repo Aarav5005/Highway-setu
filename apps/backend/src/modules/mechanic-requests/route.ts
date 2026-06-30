@@ -38,4 +38,6 @@ router.get('/my-requests', requireAuth(['driver']), controller.getDriverRequests
 
 router.get('/incoming', requireAuth(['mechanic']), controller.getIncomingRequests);
 
+router.get('/history', requireAuth(['mechanic']), controller.getMechanicHistory);
+
 export { router as mechanicRequestsRouter };

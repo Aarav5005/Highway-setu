@@ -35,18 +35,18 @@ export const updateDhabaSchema = {
     photos: z.array(z.string().url()).optional(),
   }),
   params: z.object({
-    id: z.string().uuid(),
+    userId: z.string().uuid(),
   }),
 };
 
 export const toggleOpenSchema = {
   params: z.object({
-    id: z.string().uuid(),
+    userId: z.string().uuid(),
   }),
 };
 
 export const getDhabaSchema = {
   params: z.object({
-    id: z.string().uuid(),
+    userId: z.string().uuid(),
   }),
 };

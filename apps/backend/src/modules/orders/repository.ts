@@ -69,9 +69,15 @@ export const getDhabaOrders = async (dhabaId: string, status?: string) => {
                JOIN users u ON fo.driver_id = u.id
                WHERE fo.dhaba_id = $1`;
   const params: any[] = [dhabaId];
+  let paramIndex = 2;
   if (status) {
-    query += ` AND fo.status = $2`;
-    params.push(status);
+    if (status === 'history') {
+      query += ` AND fo.status IN ('picked_up', 'rejected', 'cancelled')`;
+    } else {
+      query += ` AND fo.status = $${paramIndex}::order_status`;
+      params.push(status);
+      paramIndex++;
+    }
   }
   query += ` ORDER BY fo.created_at DESC LIMIT 50`;
 

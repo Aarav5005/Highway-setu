@@ -53,7 +53,7 @@ export const getOrderSchema = {
 export const dhabaOrdersQuerySchema = {
   query: z.object({
     status: z
-      .enum(['pending', 'accepted', 'preparing', 'ready', 'picked_up', 'rejected', 'cancelled'])
+      .enum(['pending', 'accepted', 'preparing', 'ready', 'picked_up', 'rejected', 'cancelled', 'history'])
       .optional(),
   }),
 };

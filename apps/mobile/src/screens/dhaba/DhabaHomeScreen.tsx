@@ -1,8 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Platform, Animated, Easing, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { theme } from '../../theme';
 import { ordersApi } from '../../api/orders';
 import OrderCard from '../../components/OrderCard';
+import ErrorBanner from '../../components/ErrorBanner';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+// Helper component for interactive scaling buttons
+const AnimatedPressable = ({ children, onPress, style }: any) => {
+  const scale = React.useRef(new Animated.Value(1)).current;
+  return (
+    <TouchableOpacity
+      activeOpacity={0.95}
+      onPressIn={() => Animated.spring(scale, { toValue: 0.9, useNativeDriver: true }).start()}
+      onPressOut={() => Animated.spring(scale, { toValue: 1, friction: 4, tension: 40, useNativeDriver: true }).start()}
+      onPress={onPress}
+    >
+      <Animated.View style={[style, { transform: [{ scale }] }]}>
+        {children}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
 
 export default function DhabaHomeScreen() {
   const [isOpen, setIsOpen] = useState(true);
@@ -10,15 +32,53 @@ export default function DhabaHomeScreen() {
   const tabs = ['Pending', 'Accepted', 'Preparing', 'Ready', 'History'];
   const [orders, setOrders] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
+
+  // Animations
+  const headerColorAnim = React.useRef(new Animated.Value(isOpen ? 1 : 0)).current;
+  const fade1 = React.useRef(new Animated.Value(0)).current;
+  const fade2 = React.useRef(new Animated.Value(0)).current;
+  const fade3 = React.useRef(new Animated.Value(0)).current;
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+
+  // Staggered entry & pulse
+  useEffect(() => {
+    Animated.stagger(150, [
+      Animated.timing(fade1, { toValue: 1, duration: 400, useNativeDriver: true }),
+      Animated.timing(fade2, { toValue: 1, duration: 400, useNativeDriver: true }),
+      Animated.timing(fade3, { toValue: 1, duration: 400, useNativeDriver: true }),
+    ]).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1.05, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  // Header Color Transition
+  useEffect(() => {
+    Animated.timing(headerColorAnim, {
+      toValue: isOpen ? 1 : 0,
+      duration: 500,
+      useNativeDriver: false, // color interpolation requires false
+    }).start();
+  }, [isOpen]);
+
+  const headerBgColor = headerColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.colors.white, '#F0FDF4'], // from white to subtle green
+  });
 
   const fetchOrders = async () => {
     try {
+      setError('');
       const res = await ordersApi.getDhabaOrders(activeTab.toLowerCase());
       setOrders(res.data?.data || []);
-    } catch(e) {
-      setOrders([
-        { id: '1', driver_name: 'Raj Singh', truck_number: 'PB10AB1234', status: activeTab.toLowerCase(), total_amount: 350, eta_minutes: 15, items: [{name: 'Dal Makhani', quantity: 2}] }
-      ]);
+    } catch(e: any) {
+      setOrders([]);
+      setError(e?.response?.data?.message || 'Failed to fetch orders');
     }
   };
 
@@ -39,77 +99,117 @@ export default function DhabaHomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Sher-e-Punjab Dhaba</Text>
-          <Text style={styles.subtitle}>NH-44 Highway</Text>
+      <Animated.View style={{ backgroundColor: theme.colors.dhabaPrimary, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.dhabaIconBg}>
+              <Image source={{uri: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=150'}} style={{width: 50, height: 50, borderRadius: 25}} />
+            </View>
+            <View>
+              <Text style={styles.title}>Sharma Dhaba</Text>
+              <Text style={styles.subtitle}>NH 62, Jaipur - Jodhpur Highway</Text>
+            </View>
+          </View>
+          <AnimatedPressable
+            style={[styles.toggleBtn, isOpen ? styles.toggleOpen : styles.toggleClosed]}
+            onPress={() => setIsOpen(!isOpen)}
+          >
+            <Text style={[styles.toggleTxt, !isOpen && {color: theme.colors.textSecondary}]}>{isOpen ? 'Open' : 'Closed'}</Text>
+            <View style={[styles.toggleDot, isOpen ? {backgroundColor: theme.colors.success} : null]} />
+          </AnimatedPressable>
         </View>
-        <TouchableOpacity style={[styles.toggleBtn, isOpen ? styles.toggleOpen : styles.toggleClosed]} onPress={() => setIsOpen(!isOpen)}>
-          <Text style={styles.toggleTxt}>{isOpen ? 'OPEN' : 'CLOSED'}</Text>
-        </TouchableOpacity>
-      </View>
+        </SafeAreaView>
+      </Animated.View>
+
+      <ErrorBanner message={error} />
 
       <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNum}>24</Text>
+        <Animated.View style={[styles.statCard, { opacity: fade1, transform: [{ translateY: fade1.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }] }]}>
+          <View style={styles.iconCircle}>
+             <FeatherIcon name="shopping-bag" size={18} color={theme.colors.white} />
+          </View>
+          <Text style={styles.statNum}>32</Text>
           <Text style={styles.statLbl}>Today's Orders</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNum}>₹4,500</Text>
-          <Text style={styles.statLbl}>Revenue</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={[styles.statNum, {color: theme.colors.primary}]}>3</Text>
-          <Text style={styles.statLbl}>Pending</Text>
-        </View>
+        </Animated.View>
+        <Animated.View style={[styles.statCard, { opacity: fade2, transform: [{ translateY: fade2.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }] }]}>
+          <View style={styles.iconCircle}>
+             <MaterialIcon name="currency-inr" size={18} color={theme.colors.white} />
+          </View>
+          <Text style={styles.statNum}>₹18,750</Text>
+          <Text style={styles.statLbl}>Today's Revenue</Text>
+        </Animated.View>
+        <Animated.View style={[styles.statCard, { opacity: fade3, transform: [{ scale: pulseAnim }, { translateY: fade3.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }] }]}>
+          <View style={styles.iconCircle}>
+             <FeatherIcon name="clipboard" size={18} color={theme.colors.white} />
+          </View>
+          <Text style={[styles.statNum]}>8</Text>
+          <Text style={[styles.statLbl]}>Pending Orders</Text>
+        </Animated.View>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabsScroller}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabsScroller} contentContainerStyle={{paddingHorizontal: theme.spacing.md}}>
         {tabs.map(tab => (
-          <TouchableOpacity key={tab} style={[styles.tab, activeTab === tab && styles.tabActive]} onPress={() => setActiveTab(tab)}>
+          <AnimatedPressable
+            key={tab}
+            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            onPress={() => setActiveTab(tab)}
+          >
             <Text style={[styles.tabTxt, activeTab === tab && styles.tabTxtActive]}>{tab}</Text>
-          </TouchableOpacity>
+          </AnimatedPressable>
         ))}
       </ScrollView>
 
-      <ScrollView 
+      <Animated.ScrollView
         contentContainerStyle={styles.list}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchOrders().then(()=>setRefreshing(false)); }} />}
+        style={{ opacity: fade1 }} // Reuse fade1 for the list body
       >
         {orders.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={{fontSize: 60, marginBottom: 16}}>🍽️</Text>
+            <View style={styles.emptyIconBg}>
+              <FeatherIcon name="inbox" size={48} color={theme.colors.border} />
+            </View>
             <Text style={styles.emptyTxt}>No {activeTab.toLowerCase()} orders</Text>
             <Text style={styles.emptySub}>Your dhaba is currently {isOpen ? 'OPEN' : 'CLOSED'}</Text>
           </View>
         ) : (
           orders.map(o => <OrderCard key={o.id} order={o} role="dhaba" onAction={handleAction} />)
         )}
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing.lg, backgroundColor: theme.colors.white, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
-  title: { ...theme.typography.h2, color: theme.colors.text },
-  subtitle: { ...theme.typography.small, color: theme.colors.textSecondary },
-  toggleBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  toggleOpen: { backgroundColor: theme.colors.success },
-  toggleClosed: { backgroundColor: theme.colors.error },
-  toggleTxt: { ...theme.typography.small, color: theme.colors.white, fontWeight: 'bold' },
-  statsRow: { flexDirection: 'row', padding: theme.spacing.md },
-  statCard: { flex: 1, backgroundColor: theme.colors.white, marginHorizontal: 4, padding: theme.spacing.md, borderRadius: theme.borderRadius.md, alignItems: 'center', elevation: 1 },
-  statNum: { ...theme.typography.h2, color: theme.colors.text, marginBottom: 4 },
-  statLbl: { ...theme.typography.tiny, color: theme.colors.textSecondary, textAlign: 'center' },
-  tabsScroller: { maxHeight: 50, borderBottomWidth: 1, borderBottomColor: theme.colors.border, backgroundColor: theme.colors.white },
-  tab: { paddingHorizontal: theme.spacing.lg, justifyContent: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
-  tabActive: { borderBottomColor: theme.colors.primary },
-  tabTxt: { ...theme.typography.body, color: theme.colors.textSecondary },
-  tabTxtActive: { color: theme.colors.primary, fontWeight: 'bold' },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
+
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing.md, paddingBottom: 24 },
+  dhabaIconBg: { width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center', marginRight: theme.spacing.sm, borderWidth: 2, borderColor: theme.colors.white },
+  title: { fontSize: 20, fontWeight: 'bold', color: theme.colors.white },
+  subtitle: { ...theme.typography.small, color: 'rgba(255,255,255,0.9)', marginTop: 2 },
+
+  toggleBtn: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20, backgroundColor: theme.colors.white },
+  toggleOpen: { },
+  toggleClosed: { },
+  toggleDot: { width: 14, height: 14, borderRadius: 7, marginLeft: 6 },
+  toggleTxt: { fontSize: 13, color: theme.colors.success, fontWeight: 'bold', paddingLeft: 4 },
+
+  statsRow: { flexDirection: 'row', paddingHorizontal: theme.spacing.md, gap: theme.spacing.sm, marginTop: -15, zIndex: 10 },
+  statCard: { flex: 1, backgroundColor: theme.colors.white, paddingVertical: 16, paddingHorizontal: 4, borderRadius: 12, alignItems: 'center', ...theme.shadows.sm, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2, borderWidth: 1, borderColor: '#F1F5F9' },
+  iconCircle: { width: 36, height: 36, borderRadius: 18, backgroundColor: theme.colors.dhabaPrimary, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
+  statNum: { fontSize: 20, fontWeight: 'bold', color: theme.colors.dhabaPrimary, marginBottom: 4 },
+  statLbl: { fontSize: 11, color: theme.colors.text, textAlign: 'center', fontWeight: '500' },
+
+  tabsScroller: { maxHeight: 50, backgroundColor: theme.colors.white, marginTop: theme.spacing.md },
+  tab: { paddingHorizontal: 18, justifyContent: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  tabActive: { borderBottomColor: theme.colors.dhabaPrimary },
+  tabTxt: { fontSize: 14, color: theme.colors.textSecondary, fontWeight: '600' },
+  tabTxtActive: { color: theme.colors.dhabaPrimary },
+
   list: { padding: theme.spacing.md, paddingBottom: 100 },
-  emptyState: { alignItems: 'center', marginTop: 60 },
-  emptyTxt: { ...theme.typography.h2, color: theme.colors.textSecondary, marginBottom: 8 },
-  emptySub: { ...theme.typography.body, color: theme.colors.textSecondary }
+  emptyState: { alignItems: 'center', marginTop: 80 },
+  emptyIconBg: { width: 100, height: 100, borderRadius: 50, backgroundColor: theme.colors.white, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.lg, ...theme.shadows.sm },
+  emptyTxt: { ...theme.typography.h2, color: theme.colors.text, marginBottom: 8 },
+  emptySub: { ...theme.typography.body, color: theme.colors.textSecondary },
 });

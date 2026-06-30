@@ -5,6 +5,7 @@ import {
   validateRefreshToken,
   validateSendOtp,
   validateVerifyOtp,
+  validateRoleSelection,
 } from './validator';
 import { createAuthRepository } from './repository';
 import { createAuthService } from './service';
@@ -27,3 +28,9 @@ authRouter.post('/refresh', validateRequest(validateRefreshToken), controller.re
 authRouter.post('/logout', requireAuth(), validateRequest(validateLogout), controller.logout);
 authRouter.get('/me', requireAuth(), controller.me);
 authRouter.post('/admin-login', validateRequest(validateAdminLogin), controller.adminLogin);
+authRouter.post(
+  '/role',
+  requireAuth(),
+  validateRequest(validateRoleSelection),
+  controller.selectRole
+);

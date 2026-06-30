@@ -98,12 +98,7 @@ const parseClaims = (decoded: string | jwt.JwtPayload): AccessTokenClaims => {
     });
   }
 
-  if (
-    role !== 'driver' &&
-    role !== 'dhaba_owner' &&
-    role !== 'mechanic_owner' &&
-    role !== 'admin'
-  ) {
+  if (role !== 'driver' && role !== 'dhaba_owner' && role !== 'mechanic' && role !== 'admin') {
     throw new AppError({
       statusCode: 401,
       code: 'AUTH_INVALID_TOKEN',

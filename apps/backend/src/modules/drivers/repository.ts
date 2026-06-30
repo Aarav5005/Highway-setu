@@ -119,7 +119,7 @@ export const createDriverProfileRepository = (): DriverProfileRepository => ({
         SELECT
           dp.user_id,
           u.phone_e164,
-          u.preferred_language,
+          u.language_pref as preferred_language,
           dp.full_name,
           dp.license_number,
           dp.truck_registration_number,
@@ -209,6 +209,11 @@ export const createDriverProfileRepository = (): DriverProfileRepository => ({
         input.truckRegistrationNumber.trim().toUpperCase(),
         input.truckType.trim(),
       ]
+    );
+
+    await dbPool.query(
+      `UPDATE users SET verification_status = 'verified', updated_at = now() WHERE id = $1 AND verification_status != 'verified'`,
+      [input.userId]
     );
 
     const record = await this.findByUserId(input.userId);

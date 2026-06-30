@@ -1,7 +1,7 @@
 import { dbPool } from '../../db/pool';
 
 export const getActiveTrip = async (driverId: string) => {
-  const result = await dbPool.query('SELECT * FROM trips WHERE driver_id = $1 AND status = $2', [
+  const result = await dbPool.query('SELECT * FROM trips WHERE driver_id = $1 AND status = $2::trip_status', [
     driverId,
     'active',
   ]);

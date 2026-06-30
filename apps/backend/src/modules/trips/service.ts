@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppError } from '../../errors/app-error';
-import { env } from '../../config/env';
 import * as tripsRepo from './repository';
 import { getTripPOIs } from '../location/service';
 import { firebaseMessaging } from '../../integrations/firebase';
@@ -28,18 +27,19 @@ export const startTripService = async (
 ) => {
   await tripsRepo.cancelActiveTrip(driverId);
 
-  const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${data.from_lat},${data.from_lng}&destination=${data.to_lat},${data.to_lng}&key=${env.GOOGLE_MAPS_API_KEY}`;
+  // Fallback to OSRM since Google Maps API key is restricted/invalid
+  const url = `http://router.project-osrm.org/route/v1/driving/${data.from_lng},${data.from_lat};${data.to_lng},${data.to_lat}?overview=full`;
   const res = await fetch(url);
   const mapData = (await res.json()) as any;
-  if (!res.ok || mapData.status !== 'OK') {
+  if (!res.ok || mapData.code !== 'Ok') {
     throw new AppError({
       statusCode: 500,
       code: 'MAPS_API_ERROR',
-      message: mapData.error_message || mapData.status || 'Failed to fetch directions',
+      message: mapData.message || mapData.code || 'Failed to fetch directions from OSRM',
     });
   }
-  const polyline = mapData.routes[0].overview_polyline.points;
-  const distanceMeters = mapData.routes[0].legs[0].distance.value;
+  const polyline = mapData.routes[0].geometry;
+  const distanceMeters = mapData.routes[0].distance;
   const distanceKm = distanceMeters / 1000;
 
   const trip = await tripsRepo.startTrip(

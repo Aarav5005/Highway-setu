@@ -23,5 +23,5 @@ export default function StarRating({ rating, size = 16 }: { rating: number, size
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
-  text: { marginLeft: 4, color: theme.colors.textSecondary, fontWeight: '600' }
+  text: { marginLeft: 4, color: theme.colors.textSecondary, fontWeight: '600' },
 });

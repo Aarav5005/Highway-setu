@@ -43,5 +43,5 @@ const styles = StyleSheet.create({
   cancelBtn: { backgroundColor: theme.colors.background },
   confirmBtn: { backgroundColor: theme.colors.primary },
   cancelTxt: { ...theme.typography.body, color: theme.colors.text, fontWeight: 'bold' },
-  confirmTxt: { ...theme.typography.body, color: theme.colors.white, fontWeight: 'bold' }
+  confirmTxt: { ...theme.typography.body, color: theme.colors.white, fontWeight: 'bold' },
 });

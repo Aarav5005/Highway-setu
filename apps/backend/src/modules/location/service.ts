@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { env } from '../../config/env';
 import { dbPool } from '../../db/pool';
 
 export const getNearbyDhabas = async (lat: number, lng: number, radiusKm: number) => {
@@ -76,20 +75,22 @@ export const getTripPOIs = async (
   toLat: number,
   toLng: number
 ) => {
-  const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${fromLat},${fromLng}&destination=${toLat},${toLng}&key=${env.GOOGLE_MAPS_API_KEY}`;
+  // Fallback to OSRM since Google Maps API key is restricted/invalid
+  const url = `http://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full`;
   const res = await fetch(url);
   const data = (await res.json()) as any;
-  if (!res.ok || data.status !== 'OK') {
-    throw new Error(data.error_message || data.status || 'Failed to fetch directions');
+  if (!res.ok || data.code !== 'Ok') {
+    throw new Error(data.message || data.code || 'Failed to fetch directions from OSRM');
   }
-  const polylineStr = data.routes[0].overview_polyline.points;
+  const polylineStr = data.routes[0].geometry;
 
   // Search distance is 5km
   const searchDistanceMeters = 5000;
 
   const dhabasQuery = `
     SELECT 
-      user_id as id, dhaba_name, avg_rating, amenities, is_open
+      user_id as id, dhaba_name, avg_rating, amenities, is_open,
+      ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
     FROM dhaba_profiles
     WHERE is_verified = true AND is_open = true
       AND ST_DWithin(
@@ -102,7 +103,8 @@ export const getTripPOIs = async (
 
   const mechanicsQuery = `
     SELECT 
-      m.user_id as id, m.shop_name, m.services_offered, m.can_travel, u.phone_e164 as phone
+      m.user_id as id, m.shop_name, m.services_offered, m.can_travel, u.phone_e164 as phone,
+      ST_Y(m.location::geometry) as lat, ST_X(m.location::geometry) as lng
     FROM mechanic_profiles m
     JOIN users u ON m.user_id = u.id
     WHERE m.is_verified = true

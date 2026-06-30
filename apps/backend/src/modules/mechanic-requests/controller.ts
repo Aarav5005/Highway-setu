@@ -76,3 +76,13 @@ export const getIncomingRequests = async (req: Request, res: Response, next: Nex
     next(error);
   }
 };
+
+export const getMechanicHistory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const mechanicId = req.auth?.userId as string;
+    const result = await mrService.getMechanicHistoryService(mechanicId);
+    res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+};

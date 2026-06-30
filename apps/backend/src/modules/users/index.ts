@@ -32,10 +32,10 @@ usersRouter.put(
   }),
   async (req, res, next) => {
     try {
-      await dbPool.query(
-        'UPDATE users SET language_pref = $1, updated_at = now() WHERE id = $2',
-        [req.body.language, req.auth!.userId]
-      );
+      await dbPool.query('UPDATE users SET language_pref = $1, updated_at = now() WHERE id = $2', [
+        req.body.language,
+        req.auth!.userId,
+      ]);
       res.status(200).json({ success: true });
     } catch (err) {
       next(err);

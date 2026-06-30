@@ -12,7 +12,7 @@ export const RootNavigator = () => {
   return (
     <NavigationContainer>
       {!isAuthenticated ? (
-        <AuthNavigator />
+        <AuthNavigator key="unauth" />
       ) : user?.role === 'driver' ? (
         <DriverNavigator />
       ) : user?.role === 'dhaba_owner' ? (
@@ -20,7 +20,7 @@ export const RootNavigator = () => {
       ) : user?.role === 'mechanic' ? (
         <MechanicNavigator />
       ) : (
-        <AuthNavigator />
+        <AuthNavigator key="pending" />
       )}
     </NavigationContainer>
   );

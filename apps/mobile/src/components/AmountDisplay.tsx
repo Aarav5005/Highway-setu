@@ -13,5 +13,5 @@ export default function AmountDisplay({ amount, label, style }: { amount: number
 
 const styles = StyleSheet.create({
   text: { ...theme.typography.h3, color: theme.colors.text },
-  label: { ...theme.typography.body, color: theme.colors.textSecondary }
+  label: { ...theme.typography.body, color: theme.colors.textSecondary },
 });

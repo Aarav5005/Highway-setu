@@ -7,7 +7,7 @@ const poolConfig: PoolConfig = {
   user: env.DB_USER,
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
-  ssl: env.DB_SSL ? { rejectUnauthorized: false } : false,
+  ssl: env.DB_SSL || env.DB_HOST.includes('supabase') ? { rejectUnauthorized: false } : false,
   max: 20,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 10_000,

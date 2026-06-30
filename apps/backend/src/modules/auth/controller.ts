@@ -61,4 +61,16 @@ export const createAuthController = (service: AuthService) => ({
       next(error);
     }
   },
+
+  selectRole: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await service.selectRole({
+        userId: req.auth?.userId ?? '',
+        role: req.body.role,
+      });
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
 });

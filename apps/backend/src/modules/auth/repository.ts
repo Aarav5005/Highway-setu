@@ -174,24 +174,27 @@ export const createAuthRepository = (pool: Pool = dbPool): AuthRepository => ({
   },
 
   async hasRoleProfile(userId, role) {
-    const tableName =
-      role === 'driver'
-        ? 'driver_profiles'
-        : role === 'dhaba_owner'
-          ? 'dhaba_profiles'
-          : role === 'mechanic'
-            ? 'mechanic_profiles'
-            : null;
-
-    if (!tableName) {
-      return true;
+    if (role === 'driver') {
+      const result = await pool.query<{ exists: boolean }>(
+        `SELECT EXISTS(SELECT 1 FROM driver_profiles WHERE user_id = $1) AS exists`,
+        [userId]
+      );
+      return Boolean(result.rows[0]?.exists);
     }
-
-    const result = await pool.query<{ exists: boolean }>(
-      `SELECT EXISTS(SELECT 1 FROM ${tableName} WHERE user_id = $1) AS exists`,
-      [userId]
-    );
-
-    return Boolean(result.rows[0]?.exists);
+    if (role === 'dhaba_owner') {
+      const result = await pool.query<{ exists: boolean }>(
+        `SELECT EXISTS(SELECT 1 FROM dhaba_profiles WHERE user_id = $1) AS exists`,
+        [userId]
+      );
+      return Boolean(result.rows[0]?.exists);
+    }
+    if (role === 'mechanic') {
+      const result = await pool.query<{ exists: boolean }>(
+        `SELECT EXISTS(SELECT 1 FROM mechanic_profiles WHERE user_id = $1) AS exists`,
+        [userId]
+      );
+      return Boolean(result.rows[0]?.exists);
+    }
+    return true;
   },
 });

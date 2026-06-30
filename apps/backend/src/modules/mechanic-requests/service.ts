@@ -131,3 +131,7 @@ export const getIncomingRequestsService = async (mechanicId: string) => {
   const { lat, lng } = mechRes.rows[0];
   return mrRepo.getIncomingRequests(lat, lng);
 };
+
+export const getMechanicHistoryService = async (mechanicId: string) => {
+  return mrRepo.getMechanicHistory(mechanicId);
+};

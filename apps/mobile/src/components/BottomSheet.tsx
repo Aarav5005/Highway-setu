@@ -39,5 +39,5 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.md, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
   title: { ...theme.typography.h2, color: theme.colors.text },
   close: { fontSize: 24, color: theme.colors.textSecondary, padding: 4 },
-  content: { padding: theme.spacing.lg }
+  content: { padding: theme.spacing.lg },
 });

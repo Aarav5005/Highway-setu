@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
 
 export default function ErrorBanner({ message, onRetry }: { message: string, onRetry?: () => void }) {
-  if (!message) return null;
-  
+  if (!message) {return null;}
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{message}</Text>
@@ -41,5 +41,5 @@ const styles = StyleSheet.create({
     ...theme.typography.small,
     color: theme.colors.white,
     fontWeight: 'bold',
-  }
+  },
 });

@@ -22,5 +22,5 @@ const styles = StyleSheet.create({
     ...theme.typography.body,
     color: theme.colors.textSecondary,
     marginTop: theme.spacing.md,
-  }
+  },
 });

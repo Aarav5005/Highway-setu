@@ -20,25 +20,8 @@ export default function Dashboard() {
     { name: 'Active SOS Alerts', value: data?.activeSos || 0, icon: AlertTriangle, color: data?.activeSos > 0 ? 'text-red-600' : 'text-slate-600', bg: data?.activeSos > 0 ? 'bg-red-100' : 'bg-slate-100' },
   ];
 
-  const dummyRegistrationData = [
-    { date: 'Mon', drivers: 40, dhabas: 24, mechanics: 24 },
-    { date: 'Tue', drivers: 30, dhabas: 13, mechanics: 22 },
-    { date: 'Wed', drivers: 20, dhabas: 58, mechanics: 22 },
-    { date: 'Thu', drivers: 27, dhabas: 39, mechanics: 20 },
-    { date: 'Fri', drivers: 18, dhabas: 48, mechanics: 21 },
-    { date: 'Sat', drivers: 23, dhabas: 38, mechanics: 25 },
-    { date: 'Sun', drivers: 34, dhabas: 43, mechanics: 21 },
-  ];
-
-  const dummyOrderData = [
-    { date: 'Mon', orders: 120 },
-    { date: 'Tue', orders: 132 },
-    { date: 'Wed', orders: 101 },
-    { date: 'Thu', orders: 134 },
-    { date: 'Fri', orders: 190 },
-    { date: 'Sat', orders: 230 },
-    { date: 'Sun', orders: 210 },
-  ];
+  const registrationData = data?.registrationsData || [];
+  const orderData = data?.ordersData || [];
 
   if (isLoading) return <div className="p-4">Loading stats...</div>;
 
@@ -67,7 +50,7 @@ export default function Dashboard() {
           <h3 className="text-lg font-medium text-slate-900 mb-4">Registrations (Last 7 Days)</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dummyRegistrationData}>
+              <LineChart data={registrationData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
@@ -85,7 +68,7 @@ export default function Dashboard() {
           <h3 className="text-lg font-medium text-slate-900 mb-4">Orders per Day (Last 7 Days)</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dummyOrderData}>
+              <BarChart data={orderData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />

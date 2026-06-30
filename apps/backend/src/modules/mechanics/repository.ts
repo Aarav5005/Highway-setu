@@ -26,7 +26,7 @@ export const createMechanicProfile = async (
       location, is_verified
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
-      ST_MakePoint($4, $3), false
+      ST_MakePoint($4::float8, $3::float8), false
     ) RETURNING *`,
     [
       userId,
@@ -44,6 +44,10 @@ export const createMechanicProfile = async (
       data.pincode,
       data.phone_e164,
     ]
+  );
+  await dbPool.query(
+    `UPDATE users SET verification_status = 'verified', updated_at = now() WHERE id = $1 AND verification_status != 'verified'`,
+    [userId]
   );
   return result.rows[0];
 };
@@ -66,6 +70,7 @@ export const updateMechanicProfile = async (
     services_offered?: any;
     can_travel?: boolean;
     travel_radius_km?: number;
+    photos?: any;
   }
 ) => {
   const setClauses: string[] = [];

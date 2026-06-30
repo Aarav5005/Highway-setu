@@ -7,6 +7,11 @@ export interface ActiveTrip {
   toLocation: string;
   status: 'active' | 'completed' | 'cancelled';
   startedAt: string;
+  routePolyline?: string;
+  distanceKm?: number;
+  estimatedHours?: number;
+  dhabas?: any[];
+  mechanics?: any[];
 }
 
 interface TripState {

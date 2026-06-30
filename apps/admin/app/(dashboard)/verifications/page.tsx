@@ -1,6 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { getUsers, verifyUser } from '@/lib/api';
+import { getUsers, verifyUser, rejectUser } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 export default function VerificationsPage() {
@@ -17,6 +17,16 @@ export default function VerificationsPage() {
       refetch();
     } catch (err) {
       toast.error('Failed to approve user');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectUser(id, 'Verification failed');
+      toast.success('User rejected!');
+      refetch();
+    } catch (err) {
+      toast.error('Failed to reject user');
     }
   };
 
@@ -44,7 +54,7 @@ export default function VerificationsPage() {
                 <button onClick={() => handleApprove(user.id)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
                   Approve
                 </button>
-                <button className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors border border-red-200">
+                <button onClick={() => handleReject(user.id)} className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors border border-red-200">
                   Reject
                 </button>
               </div>

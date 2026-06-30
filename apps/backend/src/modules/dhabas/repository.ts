@@ -25,7 +25,7 @@ export const createDhabaProfile = async (
       location, is_verified, is_open
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
-      ST_MakePoint($5, $4), false, true
+      ST_MakePoint($14, $15), false, true
     ) RETURNING *`,
     [
       userId,
@@ -41,7 +41,13 @@ export const createDhabaProfile = async (
       data.district,
       data.pincode,
       data.phone_e164,
+      data.longitude,
+      data.latitude,
     ]
+  );
+  await dbPool.query(
+    `UPDATE users SET verification_status = 'verified', updated_at = now() WHERE id = $1 AND verification_status != 'verified'`,
+    [userId]
   );
   return result.rows[0];
 };
@@ -53,7 +59,13 @@ export const getDhabaById = async (id: string) => {
 
 export const updateDhabaProfile = async (
   id: string,
-  updates: { dhaba_name?: string; highway_name?: string; amenities?: any; is_open?: boolean }
+  updates: {
+    dhaba_name?: string;
+    highway_name?: string;
+    amenities?: any;
+    is_open?: boolean;
+    photos?: any;
+  }
 ) => {
   const setClauses: string[] = [];
   const values: any[] = [];

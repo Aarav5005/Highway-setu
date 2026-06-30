@@ -34,3 +34,9 @@ export const validateAdminLogin = {
     password: z.string().min(1),
   }),
 };
+
+export const validateRoleSelection = {
+  body: z.object({
+    role: z.enum(['driver', 'dhaba_owner', 'mechanic']),
+  }),
+};

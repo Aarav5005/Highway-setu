@@ -94,3 +94,14 @@ export const getIncomingRequests = async (mechanicLat: number, mechanicLng: numb
   );
   return result.rows;
 };
+
+export const getMechanicHistory = async (mechanicId: string) => {
+  const result = await dbPool.query(
+    `SELECT * FROM mechanic_requests
+     WHERE mechanic_id = $1
+     ORDER BY created_at DESC
+     LIMIT 20`,
+    [mechanicId]
+  );
+  return result.rows;
+};

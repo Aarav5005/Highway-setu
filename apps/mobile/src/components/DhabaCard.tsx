@@ -8,7 +8,7 @@ interface DhabaCardProps {
   onPress: () => void;
 }
 
-export default function DhabaCard({ dhaba, onPress }: DhabaCardProps) {
+const DhabaCard = ({ dhaba, onPress }: DhabaCardProps) => {
   const isOpen = dhaba.is_open !== false; // default true
 
   return (
@@ -19,7 +19,7 @@ export default function DhabaCard({ dhaba, onPress }: DhabaCardProps) {
           <Text style={styles.badgeText}>{isOpen ? 'OPEN' : 'CLOSED'}</Text>
         </View>
       </View>
-      
+
       <View style={styles.infoRow}>
         <StarRating rating={dhaba.avg_rating || 4.0} size={14} />
         <Text style={styles.distance}> • {dhaba.distance_km || '2.5'} km away</Text>
@@ -33,7 +33,9 @@ export default function DhabaCard({ dhaba, onPress }: DhabaCardProps) {
       </View>
     </TouchableOpacity>
   );
-}
+};
+
+export default React.memo(DhabaCard);
 
 const styles = StyleSheet.create({
   card: {
@@ -82,5 +84,5 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: 16,
     marginRight: 8,
-  }
+  },
 });

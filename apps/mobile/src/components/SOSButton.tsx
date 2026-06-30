@@ -20,7 +20,7 @@ export default function SOSButton() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: theme.spacing.xl,
+    bottom: 24,
     right: theme.spacing.lg,
     width: 64,
     height: 64,

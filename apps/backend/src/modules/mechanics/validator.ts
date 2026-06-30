@@ -48,12 +48,12 @@ export const updateMechanicSchema = {
     travel_radius_km: z.number().min(0).max(500).optional(),
   }),
   params: z.object({
-    id: z.string().uuid(),
+    userId: z.string().uuid(),
   }),
 };
 
 export const getMechanicSchema = {
   params: z.object({
-    id: z.string().uuid(),
+    userId: z.string().uuid(),
   }),
 };
